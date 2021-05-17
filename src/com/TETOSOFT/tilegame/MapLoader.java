@@ -9,6 +9,8 @@ import javax.swing.ImageIcon;
 import com.TETOSOFT.graphics.*;
 import com.TETOSOFT.tilegame.sprites.*;
 
+import utils.GameLoader;
+
 
 /**
     The ResourceManager class loads and manages tile Images and
@@ -17,7 +19,7 @@ import com.TETOSOFT.tilegame.sprites.*;
 */
 public class MapLoader 
 {
-    private ArrayList tiles;
+    private ArrayList<Image> tiles;
     public int currentMap;
     private GraphicsConfiguration gc;
 
@@ -42,7 +44,12 @@ public class MapLoader
     }
 
 
-    /**
+    public void setCurrentMap(int currentMap) {
+		this.currentMap = currentMap;
+	}
+
+
+	/**
         Gets an image from the images/ directory.
     */
     public Image loadImage(String name) 
@@ -89,7 +96,7 @@ public class MapLoader
     }
 
 
-    public TileMap loadNextMap() 
+    public TileMap loadNextMap(GameLoader gameLoader) 
     {
         TileMap map = null;
         while (map == null) 
@@ -97,7 +104,7 @@ public class MapLoader
             currentMap++;
             try {
                 map = loadMap(
-                    "maps/map" + currentMap + ".txt");
+                    "maps/map" + currentMap + ".txt", gameLoader);
             }
             catch (IOException ex) 
             {
@@ -115,11 +122,11 @@ public class MapLoader
     }
 
 
-    public TileMap reloadMap() 
+    public TileMap reloadMap(GameLoader gameLoader) 
     {
         try {
             return loadMap(
-                "maps/map" + currentMap + ".txt");
+                "maps/map" + currentMap + ".txt", gameLoader);
         }
         catch (IOException ex) {
             ex.printStackTrace();
@@ -128,10 +135,8 @@ public class MapLoader
     }
 
 
-    private TileMap loadMap(String filename)
-        throws IOException
-    {
-        ArrayList lines = new ArrayList();
+    private TileMap loadMap(String filename, GameLoader gameLoader) throws IOException {
+        ArrayList<String> lines = new ArrayList<>();
         int width = 0;
         int height = 0;
 
@@ -155,6 +160,18 @@ public class MapLoader
 
         // parse the lines to create a TileEngine
         height = lines.size();
+        
+        //remove the sprites that were deleted in the saved game 
+        if(gameLoader != null) {
+        	ArrayList<Integer> spritesToIgnoreY = gameLoader.getRemovedSpritesY();
+        	ArrayList<Integer> spritesToIgnoreX = gameLoader.getRemovedSpritesX();
+	        for(int i = 0; i < spritesToIgnoreY.size(); i++) {
+	        	String line = lines.get(spritesToIgnoreY.get(i));
+	        	line = line.substring(0, spritesToIgnoreX.get(i)) + " " + line.substring(spritesToIgnoreX.get(i) + 1);
+	        	lines.set(spritesToIgnoreY.get(i), line);
+	        }
+        }
+        
         TileMap newMap = new TileMap(width, height);
         for (int y=0; y<height; y++) {
             String line = (String)lines.get(y);
@@ -188,8 +205,16 @@ public class MapLoader
 
         // add the player to the map
         Sprite player = (Sprite)playerSprite.clone();
-        player.setX(TileMapDrawer.tilesToPixels(3));
-        player.setY(lines.size());
+        // set the player's position
+        if(gameLoader != null) {
+        	player.setX(TileMapDrawer.tilesToPixels(gameLoader.getPlayerX()));
+        	player.setY(TileMapDrawer.tilesToPixels(gameLoader.getPlayerY()));
+        }
+        else {
+        	player.setX(TileMapDrawer.tilesToPixels(3));
+        	player.setY(lines.size());
+        }
+        
         newMap.setPlayer(player);
 
         return newMap;
@@ -202,7 +227,8 @@ public class MapLoader
         if (hostSprite != null) {
             // clone the sprite from the "host"
             Sprite sprite = (Sprite)hostSprite.clone();
-
+            //
+            sprite.setTileX(tileX); sprite.setTileY(tileY);
             // center the sprite
             sprite.setX(
                 TileMapDrawer.tilesToPixels(tileX) +
@@ -229,7 +255,7 @@ public class MapLoader
     {
         // keep looking for tile A,B,C, etc. this makes it
         // easy to drop new tiles in the images/ directory
-        tiles = new ArrayList();
+        tiles = new ArrayList<Image>();
         char ch = 'A';
         
         while (true) 
