@@ -60,6 +60,8 @@ public class GameEngine extends GameCore
 					numLives = gameLoader.getNumLives();
 					collectedStars = gameLoader.getCollectedStars();
 					mapLoader.setCurrentMap(gameLoader.getMap() - 1);
+					//set up the game saver
+			        gameSaver = new GameSaver(gameLoader);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -67,6 +69,8 @@ public class GameEngine extends GameCore
         	else {
         		//nothing to load
         		System.out.println("The save file is empty or not found!");
+        		//set up the game saver
+                gameSaver = new GameSaver();
         	}
         }
         
@@ -80,9 +84,6 @@ public class GameEngine extends GameCore
         
         // load first map
         map = mapLoader.loadNextMap(gameLoader);
-        
-        //set up the game saver
-        gameSaver = new GameSaver();
     }
     
     
