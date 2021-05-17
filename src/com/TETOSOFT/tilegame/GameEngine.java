@@ -2,12 +2,16 @@ package com.TETOSOFT.tilegame;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.Iterator;
 
 import com.TETOSOFT.graphics.*;
 import com.TETOSOFT.input.*;
 import com.TETOSOFT.test.GameCore;
 import com.TETOSOFT.tilegame.sprites.*;
+
+import utils.GameLoader;
+import utils.GameSaver;
 
 /**
  * GameManager manages all parts of the game.
@@ -34,23 +38,51 @@ public class GameEngine extends GameCore
     private GameAction exit;
     private int collectedStars=0;
     private int numLives=6;
-   
-    public void init()
-    {
+    
+    private GameSaver gameSaver;
+    private GameLoader gameLoader = null;
+    
+    private boolean continueGame = true;
+    
+    public void init() {
         super.init();
-        
-        // set up input manager
-        initInput();
         
         // start resource manager
         mapLoader = new MapLoader(screen.getFullScreenWindow().getGraphicsConfiguration());
+        
+        if(continueGame) {
+        	//set up the game loader
+        	gameLoader = new GameLoader();
+        	if(gameLoader.check()) {
+        		try {
+        			//load the game from the save file
+					gameLoader.load();
+					numLives = gameLoader.getNumLives();
+					collectedStars = gameLoader.getCollectedStars();
+					mapLoader.setCurrentMap(gameLoader.getMap() - 1);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+        	}
+        	else {
+        		//nothing to load
+        		System.out.println("The save file is empty or not found!");
+        	}
+        }
+        
+
+        // set up input manager
+        initInput();
         
         // load resources
         drawer = new TileMapDrawer();
         drawer.setBackground(mapLoader.loadImage("background.jpg"));
         
         // load first map
-        map = mapLoader.loadNextMap();
+        map = mapLoader.loadNextMap(gameLoader);
+        
+        //set up the game saver
+        gameSaver = new GameSaver();
     }
     
     
@@ -59,10 +91,10 @@ public class GameEngine extends GameCore
      */
     public void stop() {
         super.stop();
-        
+        //save score, lives, level and player's position 
+        gameSaver.saveGame(mapLoader, collectedStars, numLives, map);
     }
-    
-    
+     
     private void initInput() {
         moveLeft = new GameAction("moveLeft");
         moveRight = new GameAction("moveRight");
@@ -205,7 +237,7 @@ public class GameEngine extends GameCore
     public Sprite getSpriteCollision(Sprite sprite) {
         
         // run through the list of Sprites
-        Iterator i = map.getSprites();
+        Iterator<Sprite> i = map.getSprites();
         while (i.hasNext()) {
             Sprite otherSprite = (Sprite)i.next();
             if (isCollision(sprite, otherSprite)) {
@@ -227,9 +259,13 @@ public class GameEngine extends GameCore
         Creature player = (Creature)map.getPlayer();
         
         
-        // player is dead! start map over
+        // player is dead!  
         if (player.getState() == Creature.STATE_DEAD) {
-            map = mapLoader.reloadMap();
+        	//restart saving
+        	gameSaver.closeWriter();
+        	gameSaver = new GameSaver();
+        	//start map over
+            map = mapLoader.reloadMap(null);
             return;
         }
         
@@ -241,13 +277,15 @@ public class GameEngine extends GameCore
         player.update(elapsedTime);
         
         // update other sprites
-        Iterator i = map.getSprites();
+        Iterator<Sprite> i = map.getSprites();
         while (i.hasNext()) {
             Sprite sprite = (Sprite)i.next();
             if (sprite instanceof Creature) {
                 Creature creature = (Creature)sprite;
                 if (creature.getState() == Creature.STATE_DEAD) {
                     i.remove();
+                    //save the creature's position
+                    gameSaver.saveDeletedSpritePosition(creature);
                 } else {
                     updateCreature(creature, elapsedTime);
                 }
@@ -368,6 +406,8 @@ public class GameEngine extends GameCore
     public void acquirePowerUp(PowerUp powerUp) {
         // remove it from the map
         map.removeSprite(powerUp);
+        //save the powerUp's position
+        gameSaver.saveDeletedSpritePosition(powerUp);
         
         if (powerUp instanceof PowerUp.Star) {
             // do something here, like give the player points
@@ -382,10 +422,11 @@ public class GameEngine extends GameCore
             // change the music
             
         } else if (powerUp instanceof PowerUp.Goal) {
-            // advance to next map      
-      
-            map = mapLoader.loadNextMap();
-            
+            // advance to next map  
+            map = mapLoader.loadNextMap(null);
+            //restart saving
+        	gameSaver.closeWriter();
+        	gameSaver = new GameSaver();
         }
     }
     
