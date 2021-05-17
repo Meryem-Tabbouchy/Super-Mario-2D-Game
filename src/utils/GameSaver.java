@@ -3,6 +3,7 @@ package utils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import com.TETOSOFT.graphics.Sprite;
 import com.TETOSOFT.tilegame.MapLoader;
@@ -19,6 +20,23 @@ public class GameSaver {
 			//create save file if it doesn't exist
 			file.createNewFile();
 			this.fileWriter = new FileWriter(saveFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public GameSaver(GameLoader gameLoader) {
+		File file = new File(saveFile);
+		try {
+			//create save file if it doesn't exist
+			file.createNewFile();
+			this.fileWriter = new FileWriter(saveFile);
+			//
+			ArrayList<Integer> spritesToIgnoreY = gameLoader.getRemovedSpritesY();
+	    	ArrayList<Integer> spritesToIgnoreX = gameLoader.getRemovedSpritesX();
+	    	for(int i = 0; i < spritesToIgnoreY.size(); i++) {
+	    		fileWriter.write("- " + spritesToIgnoreX.get(i) + "," + spritesToIgnoreY.get(i) + "\n");
+	        }
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
