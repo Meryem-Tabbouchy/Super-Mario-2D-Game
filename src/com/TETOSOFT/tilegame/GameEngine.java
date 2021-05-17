@@ -42,7 +42,11 @@ public class GameEngine extends GameCore
     private GameSaver gameSaver;
     private GameLoader gameLoader = null;
     
-    private boolean continueGame = true;
+    private boolean continueGame = false;
+    
+    public void setContinueGame(boolean continueGame) {
+    	this.continueGame = continueGame;
+    }
     
     public void init() {
         super.init();
