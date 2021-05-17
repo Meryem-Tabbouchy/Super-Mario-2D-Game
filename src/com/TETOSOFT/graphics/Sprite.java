@@ -6,7 +6,33 @@ public class Sprite {
 
     protected Animation anim;
     
-    private float x;
+    private int tileX;
+    private int tileY;
+    
+    public int getTileX() {
+		return tileX;
+	}
+
+
+
+	public void setTileX(int tileX) {
+		this.tileX = tileX;
+	}
+
+
+
+	public int getTileY() {
+		return tileY;
+	}
+
+
+
+	public void setTileY(int tileY) {
+		this.tileY = tileY;
+	}
+	/***/
+
+	private float x;
     private float y;
     
     private float dx;
