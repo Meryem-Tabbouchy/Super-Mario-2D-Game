@@ -42,7 +42,7 @@ public class GameEngine extends GameCore
     private GameSaver gameSaver;
     private GameLoader gameLoader = null;
     
-    private boolean continueGame = false;
+    private boolean continueGame = true;
     
     public void setContinueGame(boolean continueGame) {
     	this.continueGame = continueGame;
@@ -73,8 +73,6 @@ public class GameEngine extends GameCore
         	else {
         		//nothing to load
         		System.out.println("The save file is empty or not found!");
-        		//set up the game saver
-                gameSaver = new GameSaver();
         	}
         }
         
@@ -88,6 +86,10 @@ public class GameEngine extends GameCore
         
         // load first map
         map = mapLoader.loadNextMap(gameLoader);
+        
+        //set up the game saver
+        if(gameSaver == null)
+        	gameSaver = new GameSaver();
     }
     
     
