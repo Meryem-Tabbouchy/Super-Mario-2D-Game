@@ -40,7 +40,7 @@ public class GameEngine extends GameCore
     private int collectedStars=0;
     private int numLives=6;
    
-    private Clip clip;
+    private Clip clip1, clip2;
     
     public void init()
     {
@@ -58,9 +58,9 @@ public class GameEngine extends GameCore
         // load first map
         map = mapLoader.loadNextMap();
         
-        sound("super_mario.wav");
-        playSound();
-        loopSound();
+        clip1 = sound("sounds/super_mario.wav", clip1);
+        playSound(clip1);
+        loopSound(clip1);
     }
     
     
@@ -69,7 +69,7 @@ public class GameEngine extends GameCore
      */
     public void stop() {
         super.stop();
-        stopSound();
+        stopSound(clip1);
     }
     
     
@@ -357,7 +357,24 @@ public class GameEngine extends GameCore
             } else {
                 // player dies!
                 player.setState(Creature.STATE_DYING);
+                
+                stopSound(clip1);
+                clip2 = sound("sounds/Mario Dead _ Sound Effects.wav",clip2);
+                playSound(clip2);
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+              
                 numLives--;
+                
+                if(numLives!=0) {
+                	clip1 = sound("sounds/super_mario.wav", clip1);
+                    playSound(clip1);
+                    loopSound(clip1);
+                }
+                
                 if(numLives==0) {
                     try {
                         Thread.sleep(3000);
@@ -376,11 +393,16 @@ public class GameEngine extends GameCore
      * from the map.
      */
     public void acquirePowerUp(PowerUp powerUp) {
+    	
         // remove it from the map
         map.removeSprite(powerUp);
         
         if (powerUp instanceof PowerUp.Star) {
             // do something here, like give the player points
+        	
+        	clip2 = sound("sounds/Super Mario Bros.-Coin Sound Effect.wav",clip2);
+            playSound(clip2);
+            
             collectedStars++;
             if(collectedStars==100) 
             {
@@ -393,8 +415,22 @@ public class GameEngine extends GameCore
             
         } else if (powerUp instanceof PowerUp.Goal) {
             // advance to next map      
-      
+          
+        	
+//          while(clip2.getMicrosecondLength() != clip2.getMicrosecondPosition()) {       	
+//        }
+            
             map = mapLoader.loadNextMap();
+           
+//            stopSound(clip1);
+//            clip2 = sound("sounds/Super Mario Bros. Music - Level Complete.wav",clip2);
+//            playSound(clip2);
+//            
+//            
+//            playSound(clip1);
+//            loopSound(clip1);
+//            
+
             
         }
     }
@@ -404,7 +440,7 @@ public class GameEngine extends GameCore
     /**
      * Handles playing, stoping, and looping of sounds for the game.
      */
-    public void sound(String fileName) {
+    public Clip sound(String fileName, Clip clip) {
     	// specify the sound to play
         // (assuming the sound can be played by the audio system)
         // from a wave File
@@ -432,18 +468,18 @@ public class GameEngine extends GameCore
             throw new RuntimeException("Sound: Line Unavailable: " + e);
         }
     	
-
+    	return clip;
     }
     
     // play, stop, loop the sound clip
-    public void playSound(){
+    public void playSound(Clip clip){
         clip.setFramePosition(0);  // Must always rewind!
         clip.start();
     }
-    public void loopSound(){
+    public void loopSound(Clip clip){
         clip.loop(Clip.LOOP_CONTINUOUSLY);
     }
-    public void stopSound(){
+    public void stopSound(Clip clip){
         clip.stop();
     }
     

@@ -84,7 +84,7 @@ public class ScreenManager
         frame.setResizable(false);
 
         device.setFullScreenWindow(frame);
-
+        
         if (displayMode != null && device.isDisplayChangeSupported())
         {
             try {
