@@ -1,35 +1,39 @@
 package main.java.com.TETOSOFT.tilegame;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
+import javax.swing.JOptionPane;
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Iterator;
 
-import javax.swing.JOptionPane;
 
-import main.java.com.TETOSOFT.graphics.*;
-import main.java.com.TETOSOFT.input.*;
-import main.java.com.TETOSOFT.test.GameCore;
-import main.java.com.TETOSOFT.tilegame.sprites.*;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+
+import main.java.com.TETOSOFT.graphics.Sprite;
+import main.java.com.TETOSOFT.input.GameAction;
+
 import main.java.com.TETOSOFT.input.InputManager;
+import main.java.com.TETOSOFT.test.GameCore;
+import main.java.com.TETOSOFT.tilegame.sprites.Creature;
 import main.java.com.TETOSOFT.tilegame.sprites.Player;
 import main.java.com.TETOSOFT.tilegame.sprites.PowerUp;
 import main.java.utils.GameLoader;
 import main.java.utils.GameSaver;
-import main.java.com.TETOSOFT.graphics.Sprite;
 
 /**
  * GameManager manages all parts of the game.
  */
 public class GameEngine extends GameCore 
 {
-    /*
-    public static void main(String[] args) 
-    {
-        new GameEngine().run();
-    }
-    
-    */
+
     public static final float GRAVITY = 0.002f;
     
     private Point pointCache = new Point();
@@ -47,6 +51,8 @@ public class GameEngine extends GameCore
     
     private GameSaver gameSaver;
     private GameLoader gameLoader = null;
+    
+    private Clip clip1, clip2;
     
     public GameEngine() {
     	super();
@@ -90,6 +96,11 @@ public class GameEngine extends GameCore
         //set up the game saver
         if(gameSaver == null)
         	gameSaver = new GameSaver();
+		
+	//play background sound
+	clip1 = sound("sounds/super_mario.wav", clip1);
+        playSound(clip1);
+        loopSound(clip1);
     }
     
     
@@ -100,6 +111,8 @@ public class GameEngine extends GameCore
         super.stop();
         //save score, lives, level and player's position 
         gameSaver.saveGame(mapLoader, collectedStars, numLives, map);
+	//stop background sound
+	stopSound(clip1);
     }
      
     private void initInput() {
@@ -125,7 +138,7 @@ public class GameEngine extends GameCore
         
         if (exit.isPressed()) {
         	 JOptionPane confirm= new JOptionPane();
-     		int i=	confirm.showConfirmDialog(null, "Voulez vous  vraiment quitter\n définitivement ?", "Quitter",JOptionPane.YES_NO_OPTION,JOptionPane.INFORMATION_MESSAGE );
+     		int i=	confirm.showConfirmDialog(null, "Voulez vous  vraiment quitter\n dï¿½finitivement ?", "Quitter",JOptionPane.YES_NO_OPTION,JOptionPane.INFORMATION_MESSAGE );
 
      	if(i==JOptionPane.YES_OPTION)
      	{ 
@@ -410,7 +423,24 @@ public class GameEngine extends GameCore
             } else {
                 // player dies!
                 player.setState(Creature.STATE_DYING);
+		
+		stopSound(clip1);
+                clip2 = sound("sounds/Mario Dead _ Sound Effects.wav",clip2);
+                playSound(clip2);
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+		
                 numLives--;
+		
+		if(numLives!=0) {
+                	clip1 = sound("sounds/super_mario.wav", clip1);
+                    playSound(clip1);
+                    loopSound(clip1);
+                }
+		
                 if(numLives==0) {
                     try {
                         Thread.sleep(3000);
@@ -451,11 +481,66 @@ public class GameEngine extends GameCore
 	    // reset lives to 6 for next map
 	    numLives=6;
             map = mapLoader.loadNextMap(null);
+	    
+//            stopSound(clip1);
+//            clip2 = sound("sounds/Super Mario Bros. Music - Level Complete.wav",clip2);
+//            playSound(clip2);
+//            
+//            
+//            playSound(clip1);
+//            loopSound(clip1);
+//            
+	    
             //restart saving
         	gameSaver.closeWriter();
         	gameSaver = new GameSaver();
         }
     }
     
+    /**
+     * Handles playing, stoping, and looping of sounds for the game.
+     */
+    public Clip sound(String fileName, Clip clip) {
+    	// specify the sound to play
+        // (assuming the sound can be played by the audio system)
+        // from a wave File
+    	try {
+            File file = new File(fileName);
+            if (file.exists()) {
+            	AudioInputStream audios = AudioSystem.getAudioInputStream(file);
+            	// load the sound into memory (a Clip)
+            	clip = AudioSystem.getClip();
+                clip.open(audios);
+            }else {
+                throw new RuntimeException("Sound: file not found: " + fileName);
+            }
+        }
+        catch (MalformedURLException e) {
+            throw new RuntimeException("Sound: Malformed URL: " + e);
+        }
+        catch (UnsupportedAudioFileException e) {
+            throw new RuntimeException("Sound: Unsupported Audio File: " + e);
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Sound: Input/Output Error: " + e);
+        }
+        catch (LineUnavailableException e) {
+            throw new RuntimeException("Sound: Line Unavailable: " + e);
+        }
+    	
+    	return clip;
+    }
+    
+    // play, stop, loop the sound clip
+    public void playSound(Clip clip){
+        clip.setFramePosition(0);  // Must always rewind!
+        clip.start();
+    }
+    public void loopSound(Clip clip){
+        clip.loop(Clip.LOOP_CONTINUOUSLY);
+    }
+    public void stopSound(Clip clip){
+        clip.stop();
+    }
       
 }
