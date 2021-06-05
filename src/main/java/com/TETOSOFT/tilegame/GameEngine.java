@@ -138,7 +138,7 @@ public class GameEngine extends GameCore
         
         if (exit.isPressed()) {
         	 JOptionPane confirm= new JOptionPane();
-     		int i=	confirm.showConfirmDialog(null, "Voulez vous  vraiment quitter\n d�finitivement ?", "Quitter",JOptionPane.YES_NO_OPTION,JOptionPane.INFORMATION_MESSAGE );
+     		int i=	confirm.showConfirmDialog(null, "Voulez vous  vraiment quitter\n définitivement ?", "Quitter",JOptionPane.YES_NO_OPTION,JOptionPane.INFORMATION_MESSAGE );
 
      	if(i==JOptionPane.YES_OPTION)
      	{ 
