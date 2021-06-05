@@ -5,6 +5,8 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Iterator;
 
+import javax.sound.sampled.*;
+
 import main.java.com.TETOSOFT.graphics.*;
 import main.java.com.TETOSOFT.input.*;
 import main.java.com.TETOSOFT.test.GameCore;
