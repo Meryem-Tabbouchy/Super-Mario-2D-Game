@@ -7,6 +7,8 @@ import java.util.Iterator;
 
 import javax.sound.sampled.*;
 
+import java.io.*;
+import java.net.MalformedURLException;
 import main.java.com.TETOSOFT.graphics.*;
 import main.java.com.TETOSOFT.input.*;
 import main.java.com.TETOSOFT.test.GameCore;
