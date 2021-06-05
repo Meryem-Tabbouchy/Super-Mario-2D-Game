@@ -466,6 +466,10 @@ public class GameEngine extends GameCore
         
         if (powerUp instanceof PowerUp.Star) {
             // do something here, like give the player points
+	    
+	    clip2 = sound("sounds/Super Mario Bros.-Coin Sound Effect.wav",clip2);
+            playSound(clip2);
+	    
             collectedStars++;
             if(collectedStars==100) 
             {
@@ -480,6 +484,10 @@ public class GameEngine extends GameCore
             // advance to next map
 	    // reset lives to 6 for next map
 	    numLives=6;
+	    
+//          while(clip2.getMicrosecondLength() != clip2.getMicrosecondPosition()) {       	
+//        }
+	    
             map = mapLoader.loadNextMap(null);
 	    
 //            stopSound(clip1);
