@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
+import javax.swing.JOptionPane;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -31,10 +32,10 @@ import main.java.utils.GameSaver;
 public class GameEngine extends GameCore 
 {
     
-    public static void main(String[] args) 
+    /*public static void main(String[] args) 
     {
         new GameEngine().run();
-    }
+    }*/
     
     public static final float GRAVITY = 0.002f;
     
