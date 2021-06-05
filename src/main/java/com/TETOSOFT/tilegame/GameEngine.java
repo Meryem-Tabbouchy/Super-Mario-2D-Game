@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Iterator;
 
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -18,6 +19,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import main.java.com.TETOSOFT.graphics.Sprite;
 import main.java.com.TETOSOFT.input.GameAction;
+
 import main.java.com.TETOSOFT.input.InputManager;
 import main.java.com.TETOSOFT.test.GameCore;
 import main.java.com.TETOSOFT.tilegame.sprites.Creature;
@@ -31,12 +33,7 @@ import main.java.utils.GameSaver;
  */
 public class GameEngine extends GameCore 
 {
-    
-    /*public static void main(String[] args) 
-    {
-        new GameEngine().run();
-    }*/
-    
+
     public static final float GRAVITY = 0.002f;
     
     private Point pointCache = new Point();
@@ -140,7 +137,22 @@ public class GameEngine extends GameCore
     {
         
         if (exit.isPressed()) {
-            stop();
+        	 JOptionPane confirm= new JOptionPane();
+     		int i=	confirm.showConfirmDialog(null, "Voulez vous  vraiment quitter\n d�finitivement ?", "Quitter",JOptionPane.YES_NO_OPTION,JOptionPane.INFORMATION_MESSAGE );
+
+     	if(i==JOptionPane.YES_OPTION)
+     	{ 
+     		
+     		// dispose the window on closing
+
+     		 stop();
+     	}
+     	else
+     	{
+
+     		//SwingUtilities.getWindowAncestor(confirm).dispose();
+     		
+     	}
         }
         
         Player player = (Player)map.getPlayer();

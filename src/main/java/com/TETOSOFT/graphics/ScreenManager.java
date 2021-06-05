@@ -1,10 +1,14 @@
 package main.java.com.TETOSOFT.graphics;
 
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 public class ScreenManager 
 {
@@ -78,10 +82,37 @@ public class ScreenManager
     public void setFullScreen(DisplayMode displayMode) 
     {
         final JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.setUndecorated(true);
         frame.setIgnoreRepaint(true);
         frame.setResizable(false);
+        
+
+        frame.addWindowListener(new WindowAdapter() {
+        	   @Override
+            public void windowClosing(WindowEvent e) {
+        		  	 //show confirmation dialog
+         		   JOptionPane confirm= new JOptionPane();
+         			int i=	confirm.showConfirmDialog(null, "Voulez vous  vraiment quitter\n définitivement ?", "Quitter",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE );
+
+               	if(i==JOptionPane.YES_OPTION)
+        			{ 
+        				
+        				// dispose the window on closing
+             
+         		 		frame.setVisible(false);
+              		   frame.dispose();
+        			}
+        			else
+        			{
+
+        				SwingUtilities.getWindowAncestor(confirm).dispose();
+        				
+        			}
+
+        		  
+            }
+        });
 
         device.setFullScreenWindow(frame);
 
