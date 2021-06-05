@@ -110,8 +110,9 @@ public class GameEngine extends GameCore
         
         inputManager.mapToKey(moveLeft, KeyEvent.VK_LEFT);
         inputManager.mapToKey(moveRight, KeyEvent.VK_RIGHT);
-        /***/
-        inputManager.mapToKey(jump, KeyEvent.VK_SPACE);
+	//making up touch instead if escape for jump
+        // inputManager.mapToKey(jump, KeyEvent.VK_SPACE);
+        inputManager.mapToKey(jump, KeyEvent.VK_UP);
         inputManager.mapToKey(exit, KeyEvent.VK_ESCAPE);
     }
     
@@ -428,7 +429,9 @@ public class GameEngine extends GameCore
             // change the music
             
         } else if (powerUp instanceof PowerUp.Goal) {
-            // advance to next map  
+            // advance to next map
+	    // reset lives to 6 for next map
+	    numLives=6;
             map = mapLoader.loadNextMap(null);
             //restart saving
         	gameSaver.closeWriter();
