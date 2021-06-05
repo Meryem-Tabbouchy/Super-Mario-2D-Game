@@ -12,7 +12,7 @@ import main.java.com.TETOSOFT.tilegame.TileMapDrawer;
 
 
 public class GameSaver {
-	protected static final String saveFile = "savePoint.txt";
+	public static final String saveFile = "savePoint.txt";
 	private FileWriter fileWriter;
 	
 	public GameSaver() {
@@ -76,7 +76,7 @@ public class GameSaver {
 		}
 	}
 	
-	private void saveScore(int collectedCoins) {
+	public void saveScore(int collectedCoins) {
 		try {
 			fileWriter.write("COINS: " + collectedCoins + "\n");
 		} catch (IOException e) {
@@ -85,7 +85,7 @@ public class GameSaver {
 		}
 	}
 	
-	private void saveLives(int lives) {
+	public void saveLives(int lives) {
 		try {
 			fileWriter.write("LIVES: " + lives + "\n");
 		} catch (IOException e) {
@@ -94,7 +94,7 @@ public class GameSaver {
 		}
 	}
 	
-	private void savePlayerPosition(float x, float y) {
+	public void savePlayerPosition(float x, float y) {
 		try {
 			fileWriter.write("PLAYER: " + TileMapDrawer.pixelsToTiles(x) + "," + TileMapDrawer.pixelsToTiles(y));
 		} catch (IOException e) {
@@ -103,7 +103,7 @@ public class GameSaver {
 		}
 	}
 	
-	private void saveCurrentMap(int currentMap) {
+	public void saveCurrentMap(int currentMap) {
 		try {
 			fileWriter.write("MAP: " + currentMap + "\n");
 		} catch (IOException e) {
