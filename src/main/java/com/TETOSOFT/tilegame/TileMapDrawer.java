@@ -135,7 +135,7 @@ public class TileMapDrawer
             null);
 
         // draw sprites
-        Iterator i = map.getSprites();
+        Iterator<Sprite> i = map.getSprites();
         while (i.hasNext()) {
             Sprite sprite = (Sprite)i.next();
             int x = Math.round(sprite.getX()) + offsetX;

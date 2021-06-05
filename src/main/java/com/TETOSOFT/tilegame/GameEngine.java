@@ -2,6 +2,7 @@ package main.java.com.TETOSOFT.tilegame;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.Iterator;
 
 import main.java.com.TETOSOFT.graphics.*;
@@ -11,6 +12,8 @@ import main.java.com.TETOSOFT.tilegame.sprites.*;
 import main.java.com.TETOSOFT.input.InputManager;
 import main.java.com.TETOSOFT.tilegame.sprites.Player;
 import main.java.com.TETOSOFT.tilegame.sprites.PowerUp;
+import main.java.utils.GameLoader;
+import main.java.utils.GameSaver;
 import main.java.com.TETOSOFT.graphics.Sprite;
 
 /**
@@ -38,23 +41,52 @@ public class GameEngine extends GameCore
     private GameAction exit;
     private int collectedStars=0;
     private int numLives=6;
-   
-    public void init()
-    {
+    
+    private GameSaver gameSaver;
+    private GameLoader gameLoader = null;
+    
+    public GameEngine() {
+    	super();
+    }
+    
+    public GameEngine(GameLoader gameLoader) {
+    	super();
+    	this.gameLoader = gameLoader;
+    }
+    
+    public void init() {
         super.init();
-        
-        // set up input manager
-        initInput();
         
         // start resource manager
         mapLoader = new MapLoader(screen.getFullScreenWindow().getGraphicsConfiguration());
+        
+        if(gameLoader != null) {
+        		try {
+        			//load the game from the save file
+					gameLoader.load();
+					numLives = gameLoader.getNumLives();
+					collectedStars = gameLoader.getCollectedStars();
+					mapLoader.setCurrentMap(gameLoader.getMap() - 1);
+					//set up the game saver
+			        gameSaver = new GameSaver(gameLoader);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+        }
+        	
+        // set up input manager
+        initInput();
         
         // load resources
         drawer = new TileMapDrawer();
         drawer.setBackground(mapLoader.loadImage("background.jpg"));
         
         // load first map
-        map = mapLoader.loadNextMap();
+        map = mapLoader.loadNextMap(gameLoader);
+        
+        //set up the game saver
+        if(gameSaver == null)
+        	gameSaver = new GameSaver();
     }
     
     
@@ -63,10 +95,10 @@ public class GameEngine extends GameCore
      */
     public void stop() {
         super.stop();
-        
+        //save score, lives, level and player's position 
+        gameSaver.saveGame(mapLoader, collectedStars, numLives, map);
     }
-    
-    
+     
     private void initInput() {
         moveLeft = new GameAction("moveLeft");
         moveRight = new GameAction("moveRight");
@@ -78,6 +110,7 @@ public class GameEngine extends GameCore
         
         inputManager.mapToKey(moveLeft, KeyEvent.VK_LEFT);
         inputManager.mapToKey(moveRight, KeyEvent.VK_RIGHT);
+        /***/
         inputManager.mapToKey(jump, KeyEvent.VK_SPACE);
         inputManager.mapToKey(exit, KeyEvent.VK_ESCAPE);
     }
@@ -113,14 +146,15 @@ public class GameEngine extends GameCore
     public void draw(Graphics2D g) {
         
         drawer.draw(g, map, screen.getWidth(), screen.getHeight());
+        System.out.println(screen.getWidth() + " " + screen.getHeight());
         g.setColor(Color.WHITE);
-        g.drawString("Press ESC for EXIT.",10.0f,20.0f);
+        g.drawString("Press ESC for EXIT.",screen.getWidth()*10/800,screen.getHeight()*20/600);
         g.setColor(Color.GREEN);
-        g.drawString("Coins: "+collectedStars,300.0f,20.0f);
+        g.drawString("Coins: "+collectedStars,screen.getWidth()*300.0f/800, screen.getHeight()*20/600);
         g.setColor(Color.YELLOW);
-        g.drawString("Lives: "+(numLives),500.0f,20.0f );
+        g.drawString("Lives: "+(numLives),screen.getWidth()*500.0f/800, screen.getHeight()*20/600);
         g.setColor(Color.WHITE);
-        g.drawString("Home: "+mapLoader.currentMap,700.0f,20.0f);
+        g.drawString("Home: "+mapLoader.currentMap,screen.getWidth()*700.0f/800, screen.getHeight()*20/600);
         
     }
     
@@ -209,7 +243,7 @@ public class GameEngine extends GameCore
     public Sprite getSpriteCollision(Sprite sprite) {
         
         // run through the list of Sprites
-        Iterator i = map.getSprites();
+        Iterator<Sprite> i = map.getSprites();
         while (i.hasNext()) {
             Sprite otherSprite = (Sprite)i.next();
             if (isCollision(sprite, otherSprite)) {
@@ -231,9 +265,13 @@ public class GameEngine extends GameCore
         Creature player = (Creature)map.getPlayer();
         
         
-        // player is dead! start map over
+        // player is dead!  
         if (player.getState() == Creature.STATE_DEAD) {
-            map = mapLoader.reloadMap();
+        	//restart saving
+        	gameSaver.closeWriter();
+        	gameSaver = new GameSaver();
+        	//start map over
+            map = mapLoader.reloadMap(null);
             return;
         }
         
@@ -245,13 +283,15 @@ public class GameEngine extends GameCore
         player.update(elapsedTime);
         
         // update other sprites
-        Iterator i = map.getSprites();
+        Iterator<Sprite> i = map.getSprites();
         while (i.hasNext()) {
             Sprite sprite = (Sprite)i.next();
             if (sprite instanceof Creature) {
                 Creature creature = (Creature)sprite;
                 if (creature.getState() == Creature.STATE_DEAD) {
                     i.remove();
+                    //save the creature's position
+                    gameSaver.saveDeletedSpritePosition(creature);
                 } else {
                     updateCreature(creature, elapsedTime);
                 }
@@ -372,6 +412,8 @@ public class GameEngine extends GameCore
     public void acquirePowerUp(PowerUp powerUp) {
         // remove it from the map
         map.removeSprite(powerUp);
+        //save the powerUp's position
+        gameSaver.saveDeletedSpritePosition(powerUp);
         
         if (powerUp instanceof PowerUp.Star) {
             // do something here, like give the player points
@@ -386,10 +428,11 @@ public class GameEngine extends GameCore
             // change the music
             
         } else if (powerUp instanceof PowerUp.Goal) {
-            // advance to next map      
-      
-            map = mapLoader.loadNextMap();
-            
+            // advance to next map  
+            map = mapLoader.loadNextMap(null);
+            //restart saving
+        	gameSaver.closeWriter();
+        	gameSaver = new GameSaver();
         }
     }
     

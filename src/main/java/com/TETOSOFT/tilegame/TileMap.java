@@ -16,7 +16,7 @@ import java.util.Iterator;
 public class TileMap {
 
     private Image[][] tiles;
-    private LinkedList sprites;
+    private LinkedList<Sprite> sprites;
     private Sprite player;
 
     /**
@@ -25,7 +25,7 @@ public class TileMap {
     */
     public TileMap(int width, int height) {
         tiles = new Image[width][height];
-        sprites = new LinkedList();
+        sprites = new LinkedList<> ();
     }
 
 
@@ -106,7 +106,7 @@ public class TileMap {
         Gets an Iterator of all the Sprites in this map,
         excluding the player Sprite.
     */
-    public Iterator getSprites() {
+    public Iterator<Sprite> getSprites() {
         return sprites.iterator();
     }
 
