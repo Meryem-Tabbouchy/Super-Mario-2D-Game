@@ -3,10 +3,9 @@ package main.java.com.TETOSOFT.graphics;
 import java.awt.Image;
 import java.util.ArrayList;
 
-public class Animation 
-{
+public class Animation {
 
-    private ArrayList frames;
+    private ArrayList<AnimFrame> frames;
     private int currFrameIndex;
     private long animTime;
     private long totalDuration;
@@ -14,11 +13,11 @@ public class Animation
 
     public Animation() 
     {
-        this(new ArrayList(), 0);
+        this(new ArrayList<AnimFrame>(), 0);
     }
 
 
-    private Animation(ArrayList frames, long totalDuration) 
+    private Animation(ArrayList<AnimFrame> frames, long totalDuration) 
     {
         this.frames = frames;
         this.totalDuration = totalDuration;
