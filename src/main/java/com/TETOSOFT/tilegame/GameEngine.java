@@ -45,6 +45,8 @@ public class GameEngine extends GameCore
     private GameSaver gameSaver;
     private GameLoader gameLoader = null;
     
+    private Clip clip1, clip2;
+    
     public GameEngine() {
     	super();
     }
@@ -87,6 +89,11 @@ public class GameEngine extends GameCore
         //set up the game saver
         if(gameSaver == null)
         	gameSaver = new GameSaver();
+		
+	//play background sound
+	clip1 = sound("sounds/super_mario.wav", clip1);
+        playSound(clip1);
+        loopSound(clip1);
     }
     
     
@@ -97,6 +104,8 @@ public class GameEngine extends GameCore
         super.stop();
         //save score, lives, level and player's position 
         gameSaver.saveGame(mapLoader, collectedStars, numLives, map);
+	//stop background sound
+	stopSound(clip1);
     }
      
     private void initInput() {
@@ -392,7 +401,24 @@ public class GameEngine extends GameCore
             } else {
                 // player dies!
                 player.setState(Creature.STATE_DYING);
+		
+		stopSound(clip1);
+                clip2 = sound("sounds/Mario Dead _ Sound Effects.wav",clip2);
+                playSound(clip2);
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+		
                 numLives--;
+		
+		if(numLives!=0) {
+                	clip1 = sound("sounds/super_mario.wav", clip1);
+                    playSound(clip1);
+                    loopSound(clip1);
+                }
+		
                 if(numLives==0) {
                     try {
                         Thread.sleep(3000);
@@ -433,11 +459,66 @@ public class GameEngine extends GameCore
 	    // reset lives to 6 for next map
 	    numLives=6;
             map = mapLoader.loadNextMap(null);
+	    
+//            stopSound(clip1);
+//            clip2 = sound("sounds/Super Mario Bros. Music - Level Complete.wav",clip2);
+//            playSound(clip2);
+//            
+//            
+//            playSound(clip1);
+//            loopSound(clip1);
+//            
+	    
             //restart saving
         	gameSaver.closeWriter();
         	gameSaver = new GameSaver();
         }
     }
     
+    /**
+     * Handles playing, stoping, and looping of sounds for the game.
+     */
+    public Clip sound(String fileName, Clip clip) {
+    	// specify the sound to play
+        // (assuming the sound can be played by the audio system)
+        // from a wave File
+    	try {
+            File file = new File(fileName);
+            if (file.exists()) {
+            	AudioInputStream audios = AudioSystem.getAudioInputStream(file);
+            	// load the sound into memory (a Clip)
+            	clip = AudioSystem.getClip();
+                clip.open(audios);
+            }else {
+                throw new RuntimeException("Sound: file not found: " + fileName);
+            }
+        }
+        catch (MalformedURLException e) {
+            throw new RuntimeException("Sound: Malformed URL: " + e);
+        }
+        catch (UnsupportedAudioFileException e) {
+            throw new RuntimeException("Sound: Unsupported Audio File: " + e);
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Sound: Input/Output Error: " + e);
+        }
+        catch (LineUnavailableException e) {
+            throw new RuntimeException("Sound: Line Unavailable: " + e);
+        }
+    	
+    	return clip;
+    }
+    
+    // play, stop, loop the sound clip
+    public void playSound(Clip clip){
+        clip.setFramePosition(0);  // Must always rewind!
+        clip.start();
+    }
+    public void loopSound(Clip clip){
+        clip.loop(Clip.LOOP_CONTINUOUSLY);
+    }
+    public void stopSound(Clip clip){
+        clip.stop();
+    }
       
 }
