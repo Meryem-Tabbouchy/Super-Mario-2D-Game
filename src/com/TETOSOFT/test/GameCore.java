@@ -14,7 +14,10 @@ public abstract class GameCore {
     protected static final int FONT_SIZE = 18;
 
     private static final DisplayMode POSSIBLE_MODES[] = {
-        new DisplayMode(800, 600, 32, 0),
+    		/***/
+    	new DisplayMode(Toolkit.getDefaultToolkit().getScreenSize().width, Toolkit.getDefaultToolkit().getScreenSize().height, 32, 0), 
+    	//new DisplayMode(1920, 1080, 32, 0),
+        /*new DisplayMode(800, 600, 32, 0),
         new DisplayMode(800, 600, 16, 0),
         new DisplayMode(800, 600, 24, 0),
         new DisplayMode(640, 480, 16, 0),
@@ -22,7 +25,7 @@ public abstract class GameCore {
         new DisplayMode(640, 480, 24, 0),
         new DisplayMode(1024, 768, 16, 0),
         new DisplayMode(1024, 768, 32, 0),
-        new DisplayMode(1024, 768, 24, 0),
+        new DisplayMode(1024, 768, 24, 0),*/
     };
 
     private boolean isRunning;

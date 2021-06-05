@@ -19,10 +19,10 @@ import utils.GameSaver;
 public class GameEngine extends GameCore 
 {
     
-    public static void main(String[] args) 
+    /*public static void main(String[] args) 
     {
         new GameEngine().run();
-    }
+    }*/
     
     public static final float GRAVITY = 0.002f;
     
@@ -42,10 +42,13 @@ public class GameEngine extends GameCore
     private GameSaver gameSaver;
     private GameLoader gameLoader = null;
     
-    private boolean continueGame = true;
+    public GameEngine() {
+    	super();
+    }
     
-    public void setContinueGame(boolean continueGame) {
-    	this.continueGame = continueGame;
+    public GameEngine(GameLoader gameLoader) {
+    	super();
+    	this.gameLoader = gameLoader;
     }
     
     public void init() {
@@ -54,10 +57,7 @@ public class GameEngine extends GameCore
         // start resource manager
         mapLoader = new MapLoader(screen.getFullScreenWindow().getGraphicsConfiguration());
         
-        if(continueGame) {
-        	//set up the game loader
-        	gameLoader = new GameLoader();
-        	if(gameLoader.check()) {
+        if(gameLoader != null) {
         		try {
         			//load the game from the save file
 					gameLoader.load();
@@ -69,14 +69,8 @@ public class GameEngine extends GameCore
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-        	}
-        	else {
-        		//nothing to load
-        		System.out.println("The save file is empty or not found!");
-        	}
         }
-        
-
+        	
         // set up input manager
         initInput();
         
@@ -113,7 +107,8 @@ public class GameEngine extends GameCore
         
         inputManager.mapToKey(moveLeft, KeyEvent.VK_LEFT);
         inputManager.mapToKey(moveRight, KeyEvent.VK_RIGHT);
-        inputManager.mapToKey(jump, KeyEvent.VK_SPACE);
+        /***/
+        inputManager.mapToKey(jump, KeyEvent.VK_UP);
         inputManager.mapToKey(exit, KeyEvent.VK_ESCAPE);
     }
     
@@ -148,14 +143,15 @@ public class GameEngine extends GameCore
     public void draw(Graphics2D g) {
         
         drawer.draw(g, map, screen.getWidth(), screen.getHeight());
+        System.out.println(screen.getWidth() + " " + screen.getHeight());
         g.setColor(Color.WHITE);
-        g.drawString("Press ESC for EXIT.",10.0f,20.0f);
+        g.drawString("Press ESC for EXIT.",screen.getWidth()*10/800,screen.getHeight()*20/600);
         g.setColor(Color.GREEN);
-        g.drawString("Coins: "+collectedStars,300.0f,20.0f);
+        g.drawString("Coins: "+collectedStars,screen.getWidth()*300.0f/800, screen.getHeight()*20/600);
         g.setColor(Color.YELLOW);
-        g.drawString("Lives: "+(numLives),500.0f,20.0f );
+        g.drawString("Lives: "+(numLives),screen.getWidth()*500.0f/800, screen.getHeight()*20/600);
         g.setColor(Color.WHITE);
-        g.drawString("Home: "+mapLoader.currentMap,700.0f,20.0f);
+        g.drawString("Home: "+mapLoader.currentMap,screen.getWidth()*700.0f/800, screen.getHeight()*20/600);
         
     }
     
