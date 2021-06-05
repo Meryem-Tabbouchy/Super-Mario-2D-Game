@@ -1,24 +1,29 @@
 package main.java.com.TETOSOFT.tilegame;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Iterator;
 
-import javax.sound.sampled.*;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
-import java.io.*;
-import java.net.MalformedURLException;
-import main.java.com.TETOSOFT.graphics.*;
-import main.java.com.TETOSOFT.input.*;
-import main.java.com.TETOSOFT.test.GameCore;
-import main.java.com.TETOSOFT.tilegame.sprites.*;
+import main.java.com.TETOSOFT.graphics.Sprite;
+import main.java.com.TETOSOFT.input.GameAction;
 import main.java.com.TETOSOFT.input.InputManager;
+import main.java.com.TETOSOFT.test.GameCore;
+import main.java.com.TETOSOFT.tilegame.sprites.Creature;
 import main.java.com.TETOSOFT.tilegame.sprites.Player;
 import main.java.com.TETOSOFT.tilegame.sprites.PowerUp;
 import main.java.utils.GameLoader;
 import main.java.utils.GameSaver;
-import main.java.com.TETOSOFT.graphics.Sprite;
 
 /**
  * GameManager manages all parts of the game.
