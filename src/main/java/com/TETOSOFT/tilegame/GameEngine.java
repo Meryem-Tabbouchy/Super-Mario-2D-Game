@@ -387,7 +387,7 @@ public class GameEngine extends GameCore
             
         } else if (powerUp instanceof PowerUp.Goal) {
             // advance to next map      
-      
+            numLives=6;
             map = mapLoader.loadNextMap();
             
         }
