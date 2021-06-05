@@ -43,7 +43,7 @@ public static void setCommencerjeu(boolean commencerjeu) {
 }
 
 
-// crátion profil du joeur
+// crÃ©tion profil du joeur
 ProfilViewOnly profilJoueurView;
 JLabel lab= new JLabel("TABLEAU    DE     BORD  SUPER MARIO ");
 JPanel panellap= new JPanel();
@@ -62,7 +62,7 @@ JMenuItem qdef= new JMenuItem("Fermer tout");
  
 
 // Theme client
-JMenuItem iprop=  new JMenuItem("Prédiction");
+JMenuItem iprop=  new JMenuItem("PrÃ©diction");
 JMenuItem i1=new JMenuItem("Tous Joueurs");
 JMenuItem i2=new JMenuItem("Nouveau Joueur");
 JMenuItem i3=new JMenuItem("Scores");
@@ -133,9 +133,9 @@ public Accueil()
 text.setLayout(new BorderLayout());
 text.add(panellap,BorderLayout.NORTH);
 	//JScrollPane scrol= new JScrollPane(text);	
-	/*panel affichage de résultats*/
+	/*panel affichage de rÃ©sultats*/
 	JTextPane textpan= new JTextPane();
-	textpan.setText("Vos résultats s'affichent\n ICI");
+	textpan.setText("Vos rÃ©sultats s'affichent\n ICI");
 	JPanel p= new JPanel();
 	p.setLayout(new FlowLayout());
 	p.setBorder(BorderFactory.createTitledBorder("Bienvenue"));
@@ -144,7 +144,7 @@ text.add(p,BorderLayout.CENTER);
 	JPanel date,facture,enbas;
 	date= new JPanel();
 	JTextPane dateaff= new JTextPane();
-	dateaff.setText("Date Aurd...\n \n "+new Date()+"\n\n Passez du bon temps \n\n à BORD..\n");
+	dateaff.setText("Date Aurd...\n \n "+new Date()+"\n\n Passez du bon temps \n\n Ã© BORD..\n");
 	dateaff.setPreferredSize(new Dimension(138,170));
 	date.add(dateaff);
   date.setBorder(BorderFactory.createTitledBorder("LA DATE "));
@@ -295,13 +295,13 @@ public void actionPerformed(ActionEvent ptte)
 		String user = "postgres";
 		 String passwd = "s4g25ma1ladbs";
 		Connection conn = DriverManager.getConnection(url, user,passwd);
-		System.out.println(" La Connexion est établie");
+		System.out.println(" La Connexion est Ã©tablie");
 	
 		Statement state = conn.createStatement();
 		ResultSet result = state.executeQuery("SELECT * FROM public.\"Client\" ");
 		
 		
-		//On récupère les MetaData
+		//On rÃ©cupÃ©re les MetaData
 		ResultSetMetaData resultMeta = result.getMetaData();
 		
 		while(result.next())
@@ -339,13 +339,13 @@ public void actionPerformed(ActionEvent ptte)
 				String user = "postgres";
 				 String passwd = "s4g25ma1ladbs";
 				Connection conn = DriverManager.getConnection(url, user,passwd);
-				System.out.println(" La Connexion est établie");
+				System.out.println(" La Connexion est Ã©tablie");
 			
 				Statement state = conn.createStatement();
 				ResultSet result = state.executeQuery("SELECT * FROM public.\"Cathegories\" ");
 				
 				
-				//On récupère les MetaData
+				//On rÃ©cupÃ©re les MetaData
 				ResultSetMetaData resultMeta = result.getMetaData();
 				
 				while(result.next())
@@ -387,13 +387,13 @@ public void actionPerformed(ActionEvent ptte)
 		String user = "postgres";
 		 String passwd = "s4g25ma1ladbs";
 		Connection conn = DriverManager.getConnection(url, user,passwd);
-		System.out.println(" La Connexion est établie");
+		System.out.println(" La Connexion est Ã©tablie");
 	
 		Statement state = conn.createStatement();
 		ResultSet result = state.executeQuery("SELECT * FROM public.\"Produit\" ");
 		
 		
-		//On récupère les MetaData
+		//On rÃ©cupÃ©re les MetaData
 		ResultSetMetaData resultMeta = result.getMetaData();
 		
 		while(result.next())
@@ -471,7 +471,7 @@ reprendre.addActionListener(new ActionListener()
 		public void actionPerformed(ActionEvent e)
 		{
 	
-			// reprise du jeu ici dans son état initial
+			// reprise du jeu ici dans son Ã©tat initial
 			
 			// restauration du jeu depuis le fichier de sauvegarde
 						Thread tcommence = new Thread(new Runnable() {
@@ -484,7 +484,7 @@ reprendre.addActionListener(new ActionListener()
 					        		new GameEngine(gameLoader).run();
 					        	}
 					        	else {
-					        		int choice = JOptionPane.showConfirmDialog(null, "Aucune partie n'est enregistrée. Voulez-vous commencer une nouvelle partie?", "", JOptionPane.YES_NO_OPTION);
+					        		int choice = JOptionPane.showConfirmDialog(null, "Aucune partie n'est enregistrÃ©e. Voulez-vous commencer une nouvelle partie?", "", JOptionPane.YES_NO_OPTION);
 					        		if(choice == JOptionPane.YES_OPTION) {
 					        			Accueil.commencerjeu= true;
 						        		new GameEngine().run();
@@ -514,13 +514,13 @@ public void actionPerformed(ActionEvent e)
 		String user = "postgres";
 		 String passwd = "s4g25ma1ladbs";
 		Connection conn = DriverManager.getConnection(url, user,passwd);
-		System.out.println(" La Connexion est établie");
+		System.out.println(" La Connexion est Ã©tablie");
 	
 		Statement state = conn.createStatement();
 		ResultSet result = state.executeQuery("SELECT * FROM public.\"Produit\" ");
 		
 		
-		//On récupère les MetaData
+		//On rÃ©cupÃ©re les MetaData
 		ResultSetMetaData resultMeta = result.getMetaData();
 		//System.out.println("\n**********************************");
 		//On affiche le nom des colonnes
@@ -573,13 +573,13 @@ public void actionPerformed(ActionEvent e)
 		String user = "postgres";
 		 String passwd = "s4g25ma1ladbs";
 		Connection conn = DriverManager.getConnection(url, user,passwd);
-		System.out.println(" La Connexion est établie");
+		System.out.println(" La Connexion est Ã©tablie");
 	
 		Statement state = conn.createStatement();
 		ResultSet result = state.executeQuery("SELECT * FROM public.\"Client\" ");
 		
 		
-		//On récupère les MetaData
+		//On rÃ©cupÃ©re les MetaData
 		ResultSetMetaData resultMeta = result.getMetaData();
 		//System.out.println("\n**********************************");
 		//On affiche le nom des colonnes
@@ -724,10 +724,10 @@ affdonnes.add(pop,BorderLayout.CENTER);
 	// forcer le system a utiliser son affichage lie a chaque SE
 	
 	try {
-		//On force à utiliser le « look and feel » du système
+		//On force Ã© utiliser le Ã© look and feel Ã© du systÃ©me
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		/*Ici on force tous les composants de notre fenêtre (de donnes)a
-		redessiner avec le « look and feel » du système*/
+		/*Ici on force tous les composants de notre fenÃ©tre (de donnes)a
+		redessiner avec le Ã© look and feel Ã© du systÃ©me*/
 		SwingUtilities.updateComponentTreeUI(affdonnes);
 		}
 		catch (InstantiationException e) {}
@@ -763,7 +763,7 @@ if ( event.getSource()== i1)
 else if(event.getSource()==qdef)
 {
 	JOptionPane quitter= new JOptionPane();
-	int i=	quitter.showConfirmDialog(null, "Voulez vous  vraiment quitter\n définitivement ?", "Quitter",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE );
+	int i=	quitter.showConfirmDialog(null, "Voulez vous  vraiment quitter\n dÃ©finitivement ?", "Quitter",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE );
 	if(i==JOptionPane.YES_OPTION)
 	{
 		SwingUtilities.getWindowAncestor(this.getContentPane()).dispose();
@@ -786,6 +786,6 @@ else if (event.getSource()==i2)
 }
 
 }
-/* creation de l affichage de données*/
+/* creation de l affichage de donnÃ©es*/
 
 }
